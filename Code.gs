@@ -2,7 +2,7 @@
  * App Script to submit tests to WebPageTest and retrieve results
  *
  * Will only work in the context of the matching Google Spreadsheet. 
- * https://docs.google.com/spreadsheet/ccc?key=0AqYTxzF6y51WdDN3R2Z3SkR0ZVdHOC1VQXl1azRRWVE&usp=sharing
+ * https://docs.google.com/spreadsheet/ccc?key=0AqYTxzF6y51WdDN3R2Z3SkR0ZVdHOC1VQXl1azRRWVE
  *
  * This is currently a work-in-progress and the code has too many 'magic numbers' for my liking e.g. row and column offsets
  */
