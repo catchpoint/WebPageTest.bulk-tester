@@ -76,6 +76,8 @@ function submitTests() {
   var spreadsheet = SpreadsheetApp.getActive();
   var sheet = spreadsheet.getSheetByName(TESTS_TAB);
   
+  spreadsheet.toast('Submitting tests…', 'Status', 5);
+  
   var range = sheet.getRange(2, 1, sheet.getLastRow() - 1, 4);
   
   var server = getServerURL();
@@ -111,7 +113,7 @@ function submitTests() {
         }
       ];
       
-      params = params.concat(scenario); // TODO: what happens id scenerio doesn't exist?
+      params = params.concat(scenario); // TODO: what happens if scenerio doesn't exist?
 
       var querystring = buildQueryString(params);
             
@@ -140,8 +142,14 @@ function submitTests() {
   
   // If any tests submitted, get a first pass of results and start trigger to poll for results
   if(submitted > 0) {
-    getResults();
-    startTrigger(TRIGGER_INTERVAL);
+    
+    getResults(); // get result of test submission
+    
+    var pollingInterval = getPollingInterval(submitted);
+    
+    spreadsheet.toast('Polling for results until all tests complete…', 'Status', 60);
+    
+    startTrigger(pollingInterval);
   }
 }
 
@@ -154,7 +162,7 @@ function getResults() {
     
   var spreadsheet = SpreadsheetApp.getActive();
   var sheet = spreadsheet.getSheetByName(TESTS_TAB);
-
+  
   var range = sheet.getRange(2, 3, sheet.getLastRow() - 1, 2); // Just get URL for test, and status columns
  
   var urls_array = range.getValues();
@@ -243,9 +251,7 @@ function getAPIKey() {
  */
 
 function buildQueryString(params) {
-  
-  Logger.log(params);
-  
+    
   var querystring = params.reduce(function(a, b) {
     return a.concat(encodeURIComponent(b.param) + "=" + encodeURIComponent(b.value));
   }, []);
@@ -426,3 +432,30 @@ function cancelTrigger() {
     }
   }
 }  
+
+/**
+ * Determine polling interval for checking test results
+ *
+ * @param {int} number of tests submitted
+ *
+ * @return {int} interval between check for test status
+ *
+ * Appscript supports polling intervals of 1, 5, 10, 15, 30 minutes
+ *
+ * Need to vary polling interval as can exceed urlfetch quota in large test runs
+ */
+
+function getPollingInterval(tests) {
+  
+  var pollingInterval;
+  
+  if(tests <= 5) {
+    pollingInterval = 1;
+  } else if (tests <= 10) {
+    pollingInterval = 5;
+  } else {
+    pollingInterval = 30;
+  }
+  
+  return pollingInterval;
+}
