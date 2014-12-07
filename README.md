@@ -13,6 +13,8 @@ Comments, suggestions, improvements etc. welcome
 
 1. Make a copy of Spreadsheet
 
+	https://docs.google.com/spreadsheet/ccc?key=0AqYTxzF6y51WdEtSU3Q4Z29Sb1NPZ3M3M0VaUGhxSHc&usp=sharing
+
 	The spreadsheet is shared read-only so you'll first need to make a copy
 
 2. Configuring Spreadsheet - Settings Tab
