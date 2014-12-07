@@ -10,7 +10,7 @@
 /*
  * License
  *
- * Copyright (c) 2013 Andy Davies, @andydavies, http://andydavies.me
+ * Copyright (c) 2013-2014 Andy Davies, @andydavies, http://andydavies.me
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction, 
@@ -30,8 +30,6 @@
 /**
  * Globals
  */
-
-var TRIGGER_INTERVAL = 1;
 
 // Named tabs
 
@@ -56,14 +54,10 @@ function onOpen() {
   var entries = [{name: "Run Tests", functionName: "submitTests"},
                  {name: "Get Results", functionName: "getResults"},
                  null,
-                 /*,
-                 {name: "Clear Results", functionName: "clearResults},
-                 null,
-                 */
-                 {name: "Update Scenarios Tab Titles", functionName: "updateScenariosTabTitles"},
-                 {name: "Update Tests Tab Titles", functionName: "updateTestsTabTitles"}];
+                 {name: "Update Scenario Columns", functionName: "updateScenarioColumns"},
+                 {name: "Update Test Columns", functionName: "updateTestColumns"}];
   
-  spreadsheet.addMenu("WebPageTest", entries);
+  spreadsheet.addMenu("WebPagetest", entries);
 };
 
 
@@ -120,8 +114,6 @@ function submitTests() {
       // build API URL and submit tests
       var wptAPI = server + "/runtest.php?" + querystring;
       
-//      Logger.log(wptAPI);
-
       var response = UrlFetchApp.fetch(wptAPI);
       var result = JSON.parse(response.getContentText());
       
@@ -314,7 +306,7 @@ function getMap(rangeName) {
  * Sets column headers on Scenarios tab
  */ 
 
-function updateScenariosTabTitles() {
+function updateScenarioColumns() {
   
   var map = getParametersMap();
   
@@ -330,7 +322,7 @@ function updateScenariosTabTitles() {
  * Sets column headers on Tests tab
  */
 
-function updateTestsTabTitles() {
+function updateTestColumns() {
   
   var map = getResultsMap();
   
