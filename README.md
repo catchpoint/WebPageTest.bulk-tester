@@ -8,6 +8,8 @@ If a test completes successfully, selected values from the results are extracted
 
 Comments, suggestions, improvements etc. welcome
 
+There are brief instructions below but for more detailed one see the relevant Performance Advent Calender post -  http://calendar.perfplanet.com/2014/driving-webpagetest-from-a-google-docs-spreadsheet/
+
 
 # Using
 
