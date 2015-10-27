@@ -69,11 +69,16 @@ function submitTests() {
 
   var spreadsheet = SpreadsheetApp.getActive();
   var sheet = spreadsheet.getSheetByName(TESTS_TAB);
-  var lastRow = function() { return sheet.getLastRow() - 1; };
+
+  var lastRowMinus = function(offset) {
+    offset = offset || 0; // zero is the default value, so the parameter can be optional
+    return sheet.getLastRow() - offset;
+  };
+  var lastRow = lastRowMinus(); // convenience variable for a zero offset
 
   spreadsheet.toast('Submitting tests…', 'Status', 5);
 
-  var range = sheet.getRange(2, 1, lastRow(), 4);
+  var range = sheet.getRange(2, 1, lastRowMinus(1), 4);
 
   var server = getServerURL();
   var APIKey = getAPIKey();
@@ -156,7 +161,7 @@ function getResults() {
   var spreadsheet = SpreadsheetApp.getActive();
   var sheet = spreadsheet.getSheetByName(TESTS_TAB);
 
-  var range = sheet.getRange(2, 3, lastRow(), 2); // Just get URL for test, and status columns
+  var range = sheet.getRange(2, 3, lastRowMinus(1), 2); // Just get URL for test, and status columns
 
   var urls_array = range.getValues();
 
@@ -346,13 +351,13 @@ function getTestScenarios() {
   var spreadsheet = SpreadsheetApp.getActive();
   var sheet = spreadsheet.getSheetByName(SCENARIOS_TAB);
 
-  var range = sheet.getRange(2, 1, lastRow(), sheet.getLastColumn());
+  var range = sheet.getRange(2, 1, lastRowMinus(1), sheet.getLastColumn());
 
   var map = getParametersMap();
 
   var scenarios = {};
 
-  for (y = 1; y < sheet.getLastRow(); y++) {
+  for (y = 1; y < lastRow; y++) {
 
     var scenario = [];
 
