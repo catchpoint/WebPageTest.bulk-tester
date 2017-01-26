@@ -15,7 +15,7 @@ There are brief instructions below but for more detailed one see the relevant Pe
 
 1. Make a copy of Spreadsheet
 
-	https://docs.google.com/spreadsheets/d/1iAmQLoazddTPu08NHzp2Zk2sXzpprhIdLCpTEt3gVYU/edit?usp=sharing
+	https://docs.google.com/spreadsheets/d/1iAmQLoazddTPu08NHzp2Zk2sXzpprhIdLCpTEt3gVYU/
 
 	The spreadsheet is shared read-only so you'll first need to make a copy
 
