@@ -187,11 +187,13 @@ function getResults() {
                 for(var column in resultsMap) {
                     cell = sheet.setActiveCell(column + (2 + i));
                     
-                    var value = eval("result." + resultsMap[column].value);  // TODO: remove eval
+                    var jsonQuery = buildJsonQuery(resultsMap[column].value);
+
+                    var value = eval("result" + jsonQuery);  // TODO: remove eval
                     
                     // some results field may not exist in some tests e.g. SpeedIndex relies on video capture
                     if(value != undefined) {
-                        cell.setValue(eval("result." + resultsMap[column].value));
+                        cell.setValue(eval("result" + jsonQuery));
                     }
                 }
             }
@@ -204,6 +206,21 @@ function getResults() {
     }
 }
 
+/**
+* Converts from using the 'dot' method to find the data into the bracket array syntax
+* e.g. "data.median.firstView.score_keep-alive" to ['data']['median']['firstView']['score_keep-alive']
+* 
+* @return {string} JSON array syntax string
+*/
+function buildJsonQuery(str) {
+  var keyArr = str.split('.');
+  var arrayLength = keyArr.length;
+  var output = "";
+  for (var i = 0; i < arrayLength; i++) {
+    output += "['"+ keyArr[i] + "']";
+  }
+  return output;
+}
 
 /**
  * Retrieves WPT server URL from Settings tab
