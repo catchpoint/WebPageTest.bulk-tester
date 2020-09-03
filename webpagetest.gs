@@ -43,6 +43,35 @@ var API_KEY = "APIKey";
 var PARAMETERS_MAP = "ParametersMap";
 var RESULTS_MAP = "ResultsMap";
 
+// Dangerous keys that include dots that cause issues when outputting data to cells
+
+var DANGER_KEYS_DOTS = [
+    "PerformancePaintTiming.first-contentful-paint",
+    "PerformancePaintTiming.first-paint",
+    "lighthouse.Performance.first-contentful-paint",
+    "lighthouse.BestPractices",
+    "lighthouse.Performance.total-blocking-time",
+    "lighthouse.Performance.cumulative-layout-shift",
+    "lighthouse.Performance.speed-index",
+    "lighthouse.Accessibility",
+    "lighthouse.Performance.largest-contentful-paint",
+    "lighthouse.ProgressiveWebApp",
+    "lighthouse.SEO",
+    "lighthouse.Performance",
+    "lighthouse.Performance.interactive"
+];
+
+// Dangerous keys that include dashes that cause issues when outputting data to cells
+
+var DANGER_KEYS_DASHES = [
+    "score_keep-alive",
+    "max-age"
+];
+
+// Create the RegExp objects used to search for dangerous keys
+
+var DANGER_REGEX_DOTS = new RegExp(DANGER_KEYS_DOTS.join("|"), 'gi');
+var DANGER_REGEX_DASHES = new RegExp(DANGER_KEYS_DASHES.join("|"), 'gi');
 
 /**
  * Adds WebPageTest menu, with actions to submit tests, check their progress and clear results
@@ -186,14 +215,45 @@ function getResults() {
                 
                 for(var column in resultsMap) {
                     cell = sheet.setActiveCell(column + (2 + i));
-                    
-                    var jsonQuery = buildJsonQuery(resultsMap[column].value);
 
-                    var value = eval("result" + jsonQuery);  // TODO: remove eval
-                    
-                    // some results field may not exist in some tests e.g. SpeedIndex relies on video capture
-                    if(value != undefined) {
-                        cell.setValue(eval("result" + jsonQuery));
+                    // store the value save multiple lookups below
+                    var resultMapValue = resultsMap[column].value;
+
+                    // if resultsMap[column].value contains a dangerous dash key use the new bracket array syntax
+                    if(DANGER_REGEX_DASHES.test(resultMapValue)){
+                        var jsonQuery = buildJsonQuery(resultMapValue);
+                        var value = eval("result" + jsonQuery);  // TODO: remove eval
+
+                        // some results field may not exist in some tests e.g. SpeedIndex relies on video capture
+                        if(value != undefined) {
+                            cell.setValue(eval("result" + jsonQuery));
+                        }
+                    } else if(DANGER_REGEX_DOTS.test(resultMapValue)){ // does the string contain a dangerous key that has a dot? Used modified bracket array syntax method
+                        // produce an array with the matching dangerous key value
+                        var match = resultMapValue.match(DANGER_REGEX_DOTS);
+
+                        // replace the dangerous key with a placeholder
+                        var replace = resultMapValue.replace(match[0], 'PLACEHOLDER');
+
+                        // convert the string into bracket array syntax
+                        var tempQuery = buildJsonQuery(replace);
+
+                        // replace PLACEHOLDER with the dangerous key
+                        var jsonQuery = tempQuery.replace('PLACEHOLDER', match[0]);
+
+                        var value = eval("result" + jsonQuery);  // TODO: remove eval
+
+                        // some results field may not exist in some tests e.g. SpeedIndex relies on video capture
+                        if(value != undefined) {
+                            cell.setValue(eval("result" + jsonQuery));
+                        }
+                    } else { // for everything else use the original method
+                        var value = eval("result." + resultMapValue);  // TODO: remove eval
+
+                        // some results field may not exist in some tests e.g. SpeedIndex relies on video capture
+                        if(value != undefined) {
+                            cell.setValue(eval("result." + resultMapValue));
+                        }
                     }
                 }
             }
