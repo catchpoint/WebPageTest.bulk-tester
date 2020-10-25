@@ -171,7 +171,7 @@ function getResults() {
         if (url && status < 200) {
             
             // WebPageTest
-            var wptAPI = url + "?f=json";
+            var wptAPI = url + "?f=json&normalizekeys=1";
             
             var response = UrlFetchApp.fetch(wptAPI);
             var result = JSON.parse(response.getContentText());
