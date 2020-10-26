@@ -2,7 +2,7 @@
  * App Script to submit tests to WebPageTest and retrieve results
  *
  * Will only work in the context of the matching Google Spreadsheet.
- * https://docs.google.com/spreadsheet/ccc?key=0AqYTxzF6y51WdDN3R2Z3SkR0ZVdHOC1VQXl1azRRWVE
+ * https://docs.google.com/spreadsheets/d/1Hz_8griZtkDhCVqSCmeyxuHHZGbzm885nt7ws65GvIM
  *
  * This is currently a work-in-progress and the code has too many 'magic numbers' for my liking e.g. row and column offsets
  */
@@ -10,7 +10,7 @@
 /*
  * License
  *
- * Copyright (c) 2013-2018 Andy Davies, @andydavies, http://andydavies.me
+ * Copyright (c) 2013-2020 Andy Davies, @andydavies, http://andydavies.me
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -36,13 +36,14 @@
 var TESTS_TAB = "Tests";
 var SCENARIOS_TAB = "Scenarios"
 
-// Named ranges
+// Named ranges on settings tabs
 
 var SERVER_URL = "ServerURL";
 var API_KEY = "APIKey";
+var NORMALIZE_KEYS = "NormalizeKeys";
+
 var PARAMETERS_MAP = "ParametersMap";
 var RESULTS_MAP = "ResultsMap";
-
 
 /**
  * Adds WebPageTest menu, with actions to submit tests, check their progress and clear results
@@ -92,29 +93,32 @@ function submitTests() {
         // If there's no URL for test then it's not been submitted (TODO: what about submission failures i.e. statusCode 400)
         if(testURL == "" && scenario != undefined) {
             
-            var params = [
-                          {
-                          param: "url",
-                          value: pageURL
-                          },
-                          {
-                          param: "k",
-                          value: APIKey
-                          },
-                          {
-                          param: "f",
-                          value: "json"
-                          }
-                          ];
+            var params = [{
+                    param: "url",
+                    value: pageURL
+                },
+                {
+                    param: "k",
+                    value: APIKey
+                },
+                {
+                    param: "f",
+                    value: "json"
+                }];
             
             params = params.concat(scenario); // TODO: what happens if scenerio doesn't exist?
             
             var querystring = buildQueryString(params);
             
-            // build API URL and submit tests
-            var wptAPI = server + "/runtest.php?" + querystring;
+            // Submit tests via POST to allow URLs that exceed 2K
+            var wptAPI = server + "/runtest.php";
+
+            var options = {
+                'method' : 'post',
+                'payload' : querystring
+            };
             
-            var response = UrlFetchApp.fetch(wptAPI);
+            var response = UrlFetchApp.fetch(wptAPI, options);
             var result = JSON.parse(response.getContentText());
             
             // get a new offset for result cells
@@ -154,6 +158,20 @@ function getResults() {
     
     var spreadsheet = SpreadsheetApp.getActive();
     var sheet = spreadsheet.getSheetByName(TESTS_TAB);
+
+    // Build querystring, allowing the WPT fields to be normalised (remove - and .) or not
+    var normalizeKeys = getNormalizeKeys();
+
+    var params = [{
+            param: "f",
+            value: "json"
+        },
+        {
+            param: "normalizekeys",
+            value: normalizeKeys
+        }];
+
+    var querystring = buildQueryString(params);
     
     var range = sheet.getRange(2, 3, sheet.getLastRow() - 1, 2); // Just get URL for test, and status columns
     
@@ -171,7 +189,7 @@ function getResults() {
         if (url && status < 200) {
             
             // WebPageTest
-            var wptAPI = url + "?f=json";
+            var wptAPI = url + "?" + querystring;
             
             var response = UrlFetchApp.fetch(wptAPI);
             var result = JSON.parse(response.getContentText());
@@ -187,11 +205,16 @@ function getResults() {
                 for(var column in resultsMap) {
                     cell = sheet.setActiveCell(column + (2 + i));
                     
-                    var value = eval("result." + resultsMap[column].value);  // TODO: remove eval
-                    
-                    // some results field may not exist in some tests e.g. SpeedIndex relies on video capture
-                    if(value != undefined) {
-                        cell.setValue(eval("result." + resultsMap[column].value));
+                    try {
+                        var value = eval("result." + resultsMap[column].value);  // TODO: remove eval
+                        
+                        // some results field may not exist in some tests e.g. SpeedIndex relies on video capture
+                        if(value != undefined) {
+                            cell.setValue(eval("result." + resultsMap[column].value));
+                        }
+                    }
+                    catch(e) {
+                        // do nothing
                     }
                 }
             }
@@ -233,6 +256,19 @@ function getAPIKey() {
     return range.getValue();
 }
 
+/**
+ * Retrieves normalizeKeys parameter from Settings tab
+ *
+ * @return {boolean} normalizeKey
+ */
+
+function getNormalizeKeys() {
+    
+    var spreadsheet = SpreadsheetApp.getActive();
+    var range = spreadsheet.getRange(NORMALIZE_KEYS);
+    
+    return range.getValue();
+}
 
 /**
  * Builds a querystring
