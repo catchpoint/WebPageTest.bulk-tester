@@ -1,7 +1,7 @@
 <p align="center"><img src="https://docs.webpagetest.org/img/wpt-navy-logo.png" alt="WebPageTest Logo" /></p>
 <p align="center"><a href="https://docs.webpagetest.org/api/integrations/#officially-supported-integrations">Learn about more WebPageTest API Integrations in our docs</a></p>
 
-#WebPageTest Google Sheets Bulk Tester
+# WebPageTest Google Sheets Bulk Tester
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](/LICENSE)
 
 Use Google Sheets to test multiple URLs using WebPageTest (either webpagetest.org if you have an API key, or another publicly accessible instance)
