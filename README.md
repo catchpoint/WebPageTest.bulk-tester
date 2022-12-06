@@ -1,4 +1,8 @@
-# WebPageTest Bulk Tester
+<p align="center"><img src="https://docs.webpagetest.org/img/wpt-navy-logo.png" alt="WebPageTest Logo" /></p>
+<p align="center"><a href="https://docs.webpagetest.org/api/integrations/#officially-supported-integrations">Learn about more WebPageTest API Integrations in our docs</a></p>
+
+#WebPageTest Google Sheets Bulk Tester
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](/LICENSE)
 
 Use Google Sheets to test multiple URLs using WebPageTest (either webpagetest.org if you have an API key, or another publicly accessible instance)
 
@@ -7,8 +11,6 @@ Each test uses one of a defined set of parameters (a scenario) so tests can eith
 When a test completes successfully, selected values from the results are extracted and added to the Tests tab.
 
 Comments, suggestions, improvements etc. welcome.
-
-If you find this sheet useful, and want to say thanks… feel free to buy me a coffee https://www.buymeacoffee.com/andydavies 
 
 There are brief instructions below but for more detailed one see the Performance Advent Calender post - http://calendar.perfplanet.com/2014/driving-webpagetest-from-a-google-docs-spreadsheet/
 
