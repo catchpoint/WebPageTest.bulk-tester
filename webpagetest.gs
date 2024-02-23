@@ -95,11 +95,7 @@ function submitTests() {
             
             var params = [{
                     param: "url",
-                    value: pageURL
-                },
-                {
-                    param: "k",
-                    value: APIKey
+          value: pageURL,
                 },
                 {
                     param: "f",
@@ -114,8 +110,11 @@ function submitTests() {
             var wptAPI = server + "/runtest.php";
 
             var options = {
-                'method' : 'post',
-                'payload' : querystring
+        method: "post",
+        payload: querystring,
+        headers: {
+          "X-WPT-API-KEY": APIKey,
+        },
             };
             
             var response = UrlFetchApp.fetch(wptAPI, options);
