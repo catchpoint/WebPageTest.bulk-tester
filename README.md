@@ -55,5 +55,8 @@ There are brief instructions below but for more detailed one see the Performance
 - Add `normalizekeys=1` to request for results so fields names containing `.` and `-` can be accessed without array notation (Thx @Nooshu)
 - Add silent error handling around requests for non-existent fields in results
 
+## v0.7 - 26th Mar 2024
+
+- Change API key submission to pass key in 'X-WPT-API-KEY' header instead of url 'k' parameter
 
 
