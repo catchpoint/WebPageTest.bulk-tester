@@ -19,7 +19,7 @@ There are brief instructions below but for more detailed one see the Performance
 
 1. Make a copy of Spreadsheet
 
-	https://docs.google.com/spreadsheets/d/1Hz_8griZtkDhCVqSCmeyxuHHZGbzm885nt7ws65GvIM
+	[WPT Bulk Tester v0.7](https://docs.google.com/spreadsheets/d/10-FAt5eelHXjzQqgx5o-JvUqrKAMIux2kp-sAwHARwk)
 
 	The spreadsheet is shared read-only so you'll first need to make a copy
 
